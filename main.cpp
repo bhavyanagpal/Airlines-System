@@ -49,7 +49,7 @@ public:
 int ReserveSeat()
 {
 
-    //system("cls");
+    system("cls");
     cout<<"IN";
     int userId=0;
     string userFlightNo;
@@ -59,9 +59,6 @@ int ReserveSeat()
     string userTicket ;
     string userAddress;
     char choose;
-
-    //string store[500][500];
-    //int storeId1 = 0, storeId2 = 0;
 
 
 
@@ -105,7 +102,7 @@ int ReserveSeat()
     ss <<"insert into user_reservation (u_id, u_name, u_phone, u_passport, u_ticket_id, u_flight_no, u_address) values ('"<<userId<<"','"+userName<<"','"+userPhone<<"','"<<userPassportNo<<"','"+userTicket<<"','"<<userFlightNo<<"','"<<userAddress<<"')";
 
     string insert_query = ss.str();
-    const char* q = insert_query.c_str(); 
+    const char* q = insert_query.c_str(); // c_str converts string to constant char and this is required
 
     qstate = mysql_query(conn, q);
 
@@ -118,7 +115,6 @@ int ReserveSeat()
         cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
     }
 
-    // Exit Code
     cout << "Press 'm' to Menu and 'a' to Reserve Again Or Any Other key to exit: ";
     cin >> choose;
     if (choose == 'm' || choose == 'M')
@@ -137,13 +133,65 @@ int ReserveSeat()
 
 int UserTicket()
 {
+     system("cls");
 
+    string input = "";
+    char choose;
+
+
+    cout << "Welcome To Airlines Reservation System" << endl << endl;
+    cout << "User Ticket Menu" << endl << endl;
+
+    cin.ignore(1, '\n');
+    cout << "Enter User Name: ";
+    getline(cin, input);
+    string findbyname_query = "select * from user_reservation where u_name like '%"+input+"%'";
+    const char* qn = findbyname_query.c_str();
+    qstate = mysql_query(conn, qn);
+
+    cout << endl;
+   if (!qstate)
+    {
+
+
+        res = mysql_store_result(conn);
+cout << "Showing Ticket of " << input << endl << endl;
+
+
+        while ((row = mysql_fetch_row(res)))
+        {
+            cout << "Ticket No.: " << row[5] << "\nUser Name: " << row[1] << "\nUser Phone No.: " << row[2] << "\nUser Passport: " << row[3] << "\nFlight No.: " << row[4] << "\nUser Address: " << row[6] << endl << endl;
+            
+        }
+
+    }
+    else
+    {
+        cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+    }
+
+    ExitMenu:
+    cout << "Press 'm' to Menu, 'a' to Search again and any other key to Exit: ";
+    cin >> choose;
+    if (choose == 'm' || choose == 'M')
+    {
+        system("cls");
+        return 1;
+    }
+    else if (choose == 'a' || choose == 'A')
+    {
+        UserTicket();
+    }
+    else
+    {
+        exit(0);
+    }
 }
 
 
 int FlightSchedule()
 {
-
+    
 }
 int DisplayPassenger()
 {
