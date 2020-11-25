@@ -49,36 +49,38 @@ public:
 int ReserveSeat()
 {
 
-    system("cls");
+    //system("cls");
+    cout<<"IN";
     int userId=0;
-    string userFlightNo = "";
-    string userName = "";
-    string userPhone = "";
-    string userPassportNo = "";
-    string userTicket = "";
-    string userAddress = "";
+    string userFlightNo;
+    string userName ;
+    string userPhone;
+    string userPassportNo;
+    string userTicket ;
+    string userAddress;
     char choose;
 
-    string store[500][500];
-    int storeId1 = 0, storeId2 = 0;
+    //string store[500][500];
+    //int storeId1 = 0, storeId2 = 0;
 
 
 
     cout << "Airlines Reservation System" << endl << endl;
     cout << "Reserve Seat Menu" << endl << endl;
 
-    cin.ignore(1, '\n');
+    //cin.ignore(1, '\n');
     cout << "Enter User Id: "<<endl;
     cin>>userId;
+    cin.ignore(1, '\n');
     cout <<endl <<"Enter User Name: ";
     getline(cin, userName);
-    cout << "Enter User Phone No: ";
+    cout <<endl<< "Enter User Phone No: ";
     getline(cin, userPhone);
-    cout << "Enter User Passport: ";
+    cout << endl<<"Enter User Passport: ";
     getline(cin, userPassportNo);
-    cout << "Enter User Ticket: ";
+    cout << endl<<"Enter User Ticket: ";
     getline(cin, userTicket);
-    cout << "Enter User Address: ";
+    cout <<endl<< "Enter User Address: ";
     getline(cin, userAddress);
 
     qstate = mysql_query(conn, "select * from flight_details where f_available > 0");
@@ -100,10 +102,10 @@ int ReserveSeat()
     cout << "Enter Flight No: ";
     getline(cin, userFlightNo);
         stringstream ss;
-    ss <<"insert into user_reservation (u_id, u_name, u_phone, u_passportno, u_ticket, u_flightno, u_address) values ('"+userId<<"','"+userName<<"','"+userPhone<<"','"<<userPassportNo<<"','"+userTicket<<"','"+userFlightNo<<"','"+userAddress<<"')";
+    ss <<"insert into user_reservation (u_id, u_name, u_phone, u_passport, u_ticket_id, u_flight_no, u_address) values ('"<<userId<<"','"+userName<<"','"+userPhone<<"','"<<userPassportNo<<"','"+userTicket<<"','"<<userFlightNo<<"','"<<userAddress<<"')";
 
     string insert_query = ss.str();
-    const char* q = insert_query.c_str(); // c_str converts string to constant char and this is required
+    const char* q = insert_query.c_str(); 
 
     qstate = mysql_query(conn, q);
 
@@ -180,6 +182,10 @@ int main()
     int choice;
     char sure;
     int menuChoice=1;
+
+
+
+
     do
     {
          cout << "Welcome To Airlines Reservation System" << endl << endl;
