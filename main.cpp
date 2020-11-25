@@ -17,10 +17,10 @@ MYSQL* conn;
 MYSQL_ROW row;
 MYSQL_RES* res;
 
-class db_response
+class database
 {
 public:
-    static void ConnectionFunction()
+    static void Connect()
     {
         conn = mysql_init(0);
         if (conn)
@@ -28,11 +28,11 @@ public:
             cout << "Database Connected" << endl;
             cout << "Press any key to continue..." << endl;
             //getch();
-            system("cls");
+
         }
         else
             cout << "Failed To Connect!" << mysql_errno(conn) << endl;
-        conn = mysql_real_connect(conn, "localhost", "root", "", "cpp_airlinereservation_db", 0, NULL, 0);
+        conn = mysql_real_connect(conn, "localhost", "root", "secret", "airlines", 0, NULL, 0);
         if (conn)
         {
             cout << "Database Connected To MySql" << conn << endl;
@@ -46,32 +46,114 @@ public:
 };
 
 
-void ReserveSeat()
-{
-    
-}
-
-void UserTicket()
+int ReserveSeat()
 {
 
+    system("cls");
+    int userId=0;
+    string userFlightNo = "";
+    string userName = "";
+    string userPhone = "";
+    string userPassportNo = "";
+    string userTicket = "";
+    string userAddress = "";
+    char choose;
+
+    string store[500][500];
+    int storeId1 = 0, storeId2 = 0;
+
+
+
+    cout << "Airlines Reservation System" << endl << endl;
+    cout << "Reserve Seat Menu" << endl << endl;
+
+    cin.ignore(1, '\n');
+    cout << "Enter User Id: "<<endl;
+    cin>>userId;
+    cout <<endl <<"Enter User Name: ";
+    getline(cin, userName);
+    cout << "Enter User Phone No: ";
+    getline(cin, userPhone);
+    cout << "Enter User Passport: ";
+    getline(cin, userPassportNo);
+    cout << "Enter User Ticket: ";
+    getline(cin, userTicket);
+    cout << "Enter User Address: ";
+    getline(cin, userAddress);
+
+    qstate = mysql_query(conn, "select * from flight_details where f_available > 0");
+    if (!qstate)
+    {
+        res = mysql_store_result(conn);
+    cout<<"--------------------------------------------------------------------------------------------------------------------\n";
+        printf("| %-20s | %-20s | %-20s | %-20s | %-20s |\n", "Flight No", "From", "Destination", "Time", "Amount");
+        while ((row = mysql_fetch_row(res)))
+        {
+            printf("| %-20s | %-20s | %-20s | %-20s | %-20s |\n", row[1], row[3], row[4], row[5], row[6]);
+        }
+        printf("--------------------------------------------------------------------------------------------------------------------\n");
+}
+    else
+    {
+        cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+    }
+    cout << "Enter Flight No: ";
+    getline(cin, userFlightNo);
+        stringstream ss;
+    ss <<"insert into user_reservation (u_id, u_name, u_phone, u_passportno, u_ticket, u_flightno, u_address) values ('"+userId<<"','"+userName<<"','"+userPhone<<"','"<<userPassportNo<<"','"+userTicket<<"','"+userFlightNo<<"','"+userAddress<<"')";
+
+    string insert_query = ss.str();
+    const char* q = insert_query.c_str(); // c_str converts string to constant char and this is required
+
+    qstate = mysql_query(conn, q);
+
+    if (!qstate)
+    {
+        cout << endl << "Successfully added in database." << endl;
+    }
+    else
+    {
+        cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+    }
+
+    // Exit Code
+    cout << "Press 'm' to Menu and 'a' to Reserve Again Or Any Other key to exit: ";
+    cin >> choose;
+    if (choose == 'm' || choose == 'M')
+    {
+        return 1;
+    }
+    else if (choose == 'a' || choose == 'A')
+    {
+        ReserveSeat();
+    }
+    else
+    {
+        exit(0);
+    }
 }
 
-
-void FlightSchedule()
+int UserTicket()
 {
 
 }
-void DisplayPassenger()
+
+
+int FlightSchedule()
+{
+
+}
+int DisplayPassenger()
 {
 
 }
 
-void FlightDetails()
+int FlightDetails()
 {
 
 }
 
-void Exit()
+int Exit()
 {
     char sure;
     cout<<"Are you sure you want to leave the program?"<<endl;
@@ -82,20 +164,25 @@ void Exit()
         }
         else if(sure=='n' || sure=='N')
         {
-
+            system("cls");
+            return 1;
         }
         else{
          cout<<endl<<"Input correctly please!";
-         Exit();
+         int x=Exit();
         }
 }
 
 
 int main()
 {
+    database::Connect();
     int choice;
     char sure;
-    cout << "Welcome To Airlines Reservation System" << endl << endl;
+    int menuChoice=1;
+    do
+    {
+         cout << "Welcome To Airlines Reservation System" << endl << endl;
     cout << "Airlines Reservation System Menu" << endl;
     cout << "1. Reserve Seat." << endl;
     cout << "2. User Ticket." << endl;
@@ -107,33 +194,24 @@ int main()
     cin >> choice;
     switch(choice)
     {
-        case 1: ReserveSeat();
-                break;
+        case 1: {menuChoice = ReserveSeat();
 
-        case 2: UserTicket();
-                break;
+                break;}
 
-        case 3: FlightSchedule();
-                break;
+        case 2: {menuChoice = UserTicket();
+                break;}
 
-        case 4: DisplayPassenger();
-                break;
+        case 3: {menuChoice = FlightSchedule();
+                break;}
 
-        case 5: FlightDetails();
-                break;
+        case 4: {menuChoice = DisplayPassenger();
+                break;}
 
-        case 6: Exit:
-            cout << "Program terminating. Are you sure? (y/N): ";
-        cin >> sure;
-        if (sure == 'y' || sure == 'Y') {
-            return 0;
-        }else if (sure == 'n' || sure == 'N') {
-            system("cls");
-            main();
-        }else {
-            cout << "Next time choose after read the corresponding line." << endl;
-            goto Exit;
-        }
+        case 5: {menuChoice = FlightDetails();
+                break;}
+
+        case 6: {menuChoice = Exit();
+                    break;}
         default:
         cout << "Please choose between The Given Numbers. Press Enter To Continue...";
         getch();
@@ -142,5 +220,7 @@ int main()
         break;
 
     }
+    }while(menuChoice);
+
     return 0;
 }
